@@ -15,6 +15,10 @@ public class StockController {
 
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE) // Tells the browser this is a Server-Sent Event (SSE) stream
     public Flux<StockPrice> streamPrices() { //  Returns a reactive stream of stock prices (not just one object or a list).
-        return stockPriceService.getPriceStream();
+        return stockPriceService.getPriceStream()
+                .onErrorResume(error -> {
+                    System.err.println("Error occurred: " + error.getMessage());
+                    return Flux.empty(); // Return an empty stream on error, fallback if error (resilient principle)
+                });
     }
 }
