@@ -92,6 +92,46 @@ data: {"symbol":"AAPL","price":149.99,"time":"2025-04-24T13:00:13.123Z"}
 
 ---
 
+# Applying Reactive Principles with Java Streams
+
+This document outlines how Reactive Manifesto principles are applied in a project, leveraging Java Streams for efficient data handling and Project Reactor for reactive streams.
+
+## 🏗️ Reactive Manifesto Principles Applied
+
+| Principle    | Application in Project                                                                                                                               |
+|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Responsive** | The system responds promptly through non-blocking asynchronous flows and includes fallback error handling mechanisms.                               |
+| **Resilient** | Retries (`retryWhen`) and error recovery strategies (`onErrorResume`) are implemented to ensure the system remains available even in the face of failures. |
+| **Elastic** | The system scales automatically as multiple clients share the same hot data stream (`share()`), optimizing resource utilization.                       |
+| **Message-driven** | Data flows through Reactor's event streams (`Flux`), guaranteeing asynchronous message propagation throughout the system.                            |
+
+## 🧩 Java Streams Usage in Service Layer
+
+The service layer utilizes Java Streams to enhance data processing. Here's a comparison with traditional loop-based approaches:
+
+| Traditional Loops (Old Way)             | Modern Java Streams (New Way)                                        |
+|-----------------------------------------|---------------------------------------------------------------------|
+| Manual for-loops to create a list of stock prices | `IntStream.range().mapToObj().collect(Collectors.toList())`        |
+| Manual filtering of data                | `.filter(price -> price.price() > 148)`                             |
+| Manual collection of results into a list | `.collect(Collectors.toList())`                                     |
+
+✅ **Key Benefit:** Java Streams make data handling **declarative**, **composable**, and readily **parallelizable** when performance demands it.
+
+## 🔄 Relationship Between Java Streams and Reactive Streams
+
+Understanding the connection between Java Streams and Reactive Streams (as implemented by Project Reactor) is crucial:
+
+| Aspect            | Java Streams                     | Reactive Streams (Project Reactor) |
+|-------------------|----------------------------------|-----------------------------------|
+| **Data Nature** | Finite collections               | Infinite, real-time sequences     |
+| **Processing Mode** | Pull-based (consumer-driven)     | Push-based (producer-driven)      |
+| **Concurrency** | Synchronous by default           | Asynchronous and non-blocking     |
+| **Error Handling**| Limited to `try-catch` blocks    | Built-in operators like `retry`, `onErrorResume` |
+| **Example Usage** | `List.stream().filter().map()`  | `Flux.filter().map().flatMap()`   |
+
+🔗 **Conclusion:** Reactive programming, particularly with Project Reactor, **extends** the capabilities of Java Streams to effectively handle **infinite data streams**, enable **non-blocking execution**, and provide robust mechanisms for **resilience**.
+
+
 ## 🛠️ Setup & Run
 
 ### 1. Clone the Project
@@ -121,15 +161,16 @@ curl http://localhost:8080/stream
 
 ## 🏗️ Technology Stack
 
-| Tech              | Purpose                             |
-|------------------|-------------------------------------|
-| Java 21          | Latest LTS release with record types |
-| Spring Boot 3.2  | Application framework                |
-| Spring WebFlux   | Reactive programming support         |
-| Project Reactor  | Core reactive library (`Flux`, `Mono`) |
-| Netty            | Non-blocking HTTP server             |
-| SSE              | Streaming updates via HTTP           |
-| Lombok           | Less boilerplate code                |
+| Tech              | Purpose                                   |
+|-------------------|-------------------------------------------|
+| Java 21           | Latest LTS release with record, Streams   |
+| Spring Boot 3.2.x | Rapid Bootstrapping Framework             |
+| Spring WebFlux    | Reactive programming model                |
+| Project Reactor   | Core reactive library (`Flux`, `Mono`)    |
+| Netty             | High-performance Non-blocking HTTP server |
+| SSE               | Streaming updates via HTTP                |
+| Lombok            | Less boilerplate code                     |
+| Maven             | Dependency management                     |
 
 ---
 
@@ -154,11 +195,11 @@ Client  <--->  Controller (WebFlux)  <--->  Service (Reactive Stream)  <--->  Ev
 
 ---
 
-## 🧪 Test It With Multiple Tabs
+## 🧪 Test It With Multiple Tabs or Clients
 
-Open [http://localhost:8080/stream](http://localhost:8080/stream) in multiple browser tabs.
+Open [http://localhost:8080/stream](http://localhost:8080/stream) in multiple browser tabs or run multiple curl commands to connect to /stream.
 
-> All clients will receive updates simultaneously — without duplicating work on the backend.
+> All clients share the same live Flux — no duplication of resources, no blocking, no scaling issues.
 
 ---
 
@@ -171,9 +212,22 @@ Open [http://localhost:8080/stream](http://localhost:8080/stream) in multiple br
 
 ---
 
+## 📌 Potential Future Enhancements
+🔥 Add WebSocket endpoints for bi-directional communication
+
+🗄️ Integrate MongoDB with Reactive CRUD Repositories
+
+☁️ Deploy via Docker and Kubernetes for cloud-native scaling
+
+🔐 Implement OAuth2 security for API protection
+
+📈 Integrate metrics for live monitoring and health checks
+
+---
+
 ## 👨‍💻 Author
 
-Built by [Your Name] – Expert Java Backend Developer & Reactive Systems Engineer.
+Crafted with ❤️ by Malinda Gamage – Expert Java Backend Developer & Reactive Systems Engineer.
 
 ---
 
