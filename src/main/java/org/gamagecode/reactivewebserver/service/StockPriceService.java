@@ -3,6 +3,7 @@ package org.gamagecode.reactivewebserver.service;
 import org.gamagecode.reactivewebserver.model.StockPrice;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
@@ -27,8 +28,16 @@ public class StockPriceService {
         // Ensures the stream is hot and shared across multiple subscribers (clients)
     }
 
+    // Example of Mono: Returning a single StockPrice (for 0-1 items)
+    public Mono<StockPrice> getSinglePrice() {
+        return Mono.just(new StockPrice(SYMBOL, randomPrice(), Instant.now())) // Create a Mono with a single StockPrice
+                .map(stockPrice -> stockPrice) // Transform the StockPrice (identity function)
+                .filter(price -> price.price() > 150) // Filter prices > 150
+                .doOnTerminate(() -> System.out.println("Price request completed")); // Log when the stream is terminated
+    }
+
     private double randomPrice() {
-        return 150 + ThreadLocalRandom.current().nextDouble(-5, 5);
+        return 150 + ThreadLocalRandom.current().nextDouble(-5, 5); // Simulate price fluctuations
     }
 
     private List<StockPrice> generateMultiplePrices() {
