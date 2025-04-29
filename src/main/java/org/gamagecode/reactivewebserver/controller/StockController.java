@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +20,16 @@ public class StockController {
                 .onErrorResume(error -> {
                     System.err.println("Error occurred: " + error.getMessage());
                     return Flux.empty(); // Return an empty stream on error, fallback if error (resilient principle)
+                });
+    }
+
+    // Mono Endpoint : returns a single stock price
+    @GetMapping(value = "/singlePrice") // No need for SSE, just a single object
+    public Mono<StockPrice> getSinglePrice() {
+        return stockPriceService.getSinglePrice()
+                .onErrorResume(error -> {
+                    System.err.println("Error occurred: " + error.getMessage());
+                    return Mono.empty(); // Return an empty Mono on error
                 });
     }
 }
